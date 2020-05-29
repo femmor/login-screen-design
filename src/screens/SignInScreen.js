@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react'
-import { StyleSheet, Text, View, Dimensions, Image, Animated, Platform, TextInput } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, Image, Animated, Platform, TextInput, StatusBar } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Animatable from 'react-native-animatable';
 
-const SignInScreen = () => {
+const SignInScreen = ({navigation}) => {
 
     const [data, setData] = useState({
         email: "",
@@ -35,16 +35,24 @@ const SignInScreen = () => {
     const handlePasswordChange = (val) => {
         setData({
             ...data,
-            password: val,
-            checkTextInputChange: true
+            password: val
+        })
+    }
+
+    // SecureTextEntry
+    const updateSecureTextEntry = () => {
+        setData({
+            ...data,
+            secureTextEntry: !data.secureTextEntry
         })
     }
 
 
     return (
         <View style={styles.container}>
+            <StatusBar backgroundColor="crimson" barStyle="light-content"/>
             <View style={styles.header}>
-                <Animatable.Text animation="fadeInLeft" style={styles.text_header}>Welcome</Animatable.Text>
+                <Animatable.Text animation="fadeInLeft" style={styles.text_header}>Login to account</Animatable.Text>
             </View>
 
             <Animatable.View animation="fadeInUp" style={styles.footer}>
@@ -78,16 +86,47 @@ const SignInScreen = () => {
                         placeholder="Enter your password" 
                         style={styles.textInput} 
                         autoCapitalize="none"
-                        secureTextEntry={true}
+                        secureTextEntry={data.secureTextEntry ? true : false}
                         onChangeText={(val) => handlePasswordChange(val)}
                     />
+                    <TouchableOpacity onPress={updateSecureTextEntry}>
                     {
-                        data.checkTextInputChange ? (<Feather
+                        data.secureTextEntry ? (<Feather
                             name="eye-off"
                             color="green"
                             size={20}
-                        />) : null
+                        />) : (<Feather
+                            name="eye"
+                            color="green"
+                            size={20}
+                        />)
                     }
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.button}>
+                    <LinearGradient
+                        colors={['#43a047', '#186b1b']}
+                        style={styles.signIn}>
+                        <Text style={[styles.textSign, {color: "#fff"}]}>
+                            Sign In
+                        </Text>
+                    </LinearGradient>
+                    <View 
+                        style={[styles.signUp, {
+                            borderWidth: 1,
+                            borderColor: "#186b1b",
+                            marginTop: 15
+                        }]}
+                    >
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate("SignUpScreen")}
+                        >
+                            <Text style={[styles.textSign, {color: "#186b1b"}]}>
+                                Sign Up
+                            </Text>
+                        </TouchableOpacity>
+                        
+                    </View>
                 </View>
             </Animatable.View>
         </View>
@@ -157,6 +196,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10
     },
+
+    signUp: {
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10
+    },
+
     textSign: {
         fontSize: 18,
         fontWeight: 'bold'
